@@ -17,14 +17,16 @@ class Counter extends Component {
             <React.Fragment>
                 <span className={this.getBadgeClasses()}>{this.formatCount()}</span><br/>
                 <button onClick={this.handleDecrement} className="btn btn-secondary btn-sm m-2">Decrement</button>
-                <button onClick={() => {this.handleIncrement()}} className="btn btn-secondary btn-sm m-2">Increment</button>
+                <button onClick={this.handleIncrement} className="btn btn-secondary btn-sm m-2">Increment</button>
                 <br/>
             </React.Fragment>
         );
     }
 
-    handleDecrement(){
-        alert("Decrement click.");
+    handleDecrement = (product) => {
+        console.log(product);
+
+        this.setState({count: this.state.count - 1});
     }
 
     handleIncrement = (product) => {
