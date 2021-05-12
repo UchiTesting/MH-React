@@ -12,11 +12,6 @@ class Counter extends Component {
         fontWeight: 'bold'
     }
 
-    constructor(){
-        super();
-        this.handleIncrement = this.handleIncrement.bind(this);
-    }
-
     render() {
         return (
             <React.Fragment>
@@ -33,7 +28,7 @@ class Counter extends Component {
         alert("Decrement click.");
     }
 
-    handleIncrement(){
+    handleIncrement = () => {
         alert("Increment click.");
         console.log(this.state.count);
     }
