@@ -12,15 +12,30 @@ class Counter extends Component {
         fontWeight: 'bold'
     }
 
+    constructor(){
+        super();
+        this.handleIncrement = this.handleIncrement.bind(this);
+    }
+
     render() {
         return (
             <React.Fragment>
                 {this.state.tags.length === 0 && "This displays only if the tags array is empty."}
                 <span className={this.getBadgeClasses()}>{this.formatCount()}</span><br/>
-                <button className="btn btn-secondary btn-sm m-2">Increment</button>
+                <button onClick={this.handleDecrement} className="btn btn-secondary btn-sm m-2">Decrement</button>
+                <button onClick={this.handleIncrement} className="btn btn-secondary btn-sm m-2">Increment</button>
                 {this.renderTags()}
             </React.Fragment>
         );
+    }
+
+    handleDecrement(){
+        alert("Decrement click.");
+    }
+
+    handleIncrement(){
+        alert("Increment click.");
+        console.log(this.state.count);
     }
 
     renderTags() {
