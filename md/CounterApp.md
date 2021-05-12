@@ -312,4 +312,5 @@ Though it might work, this is a tedious and noisy way to work on this matter. A 
 ```
 
 > Output
+
 ![Parameter has been passed to an event handler](img/EventParameterPassed.png)
