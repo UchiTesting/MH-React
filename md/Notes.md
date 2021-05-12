@@ -1,7 +1,7 @@
 Notes
 =====
 
-React is a framework made by Facebook in 2011.
+React is a library made by Facebook in 2011.
 
 It focuses on the usage of components. They are as the name imply, pieces of code that render a part of the site. They can be parameterized and therefore customized. Components may contain other components.
 It is implemented as a javascript class which has a `state = {}` and `render()` method. 
