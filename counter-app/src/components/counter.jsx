@@ -18,7 +18,7 @@ class Counter extends Component {
                 {this.state.tags.length === 0 && "This displays only if the tags array is empty."}
                 <span className={this.getBadgeClasses()}>{this.formatCount()}</span><br/>
                 <button onClick={this.handleDecrement} className="btn btn-secondary btn-sm m-2">Decrement</button>
-                <button onClick={this.handleIncrement} className="btn btn-secondary btn-sm m-2">Increment</button>
+                <button onClick={() => {this.handleIncrement({id:1})}} className="btn btn-secondary btn-sm m-2">Increment</button>
                 {this.renderTags()}
             </React.Fragment>
         );
@@ -28,11 +28,10 @@ class Counter extends Component {
         alert("Decrement click.");
     }
 
-    handleIncrement = () => {
-        this.setState({count: this.state.count + 1}, () => {
-            console.log("Callback setState: "+this.state.count);
-        });
-        console.log("After setState: "+this.state.count);
+    handleIncrement = (myParam) => {
+        console.log(myParam);
+
+        this.setState({count: this.state.count + 1});
     }
 
     renderTags() {
