@@ -196,3 +196,120 @@ In short, everything is truthy unless they are of one of these:
 - NaN
 
 Though there is no `if`/`else` available in JSX, we can still check a single condition. So using the principle above, we can follow the condition with `&&` operator to get what is following as a result.
+
+## Events
+
+React has events handling attributes that follows the format `onEventName`. Their value is an expression. The best way to do it is using an event handling method.
+
+A few common events:
+
+| Attribute| Description |
+|-|-|
+| onClick | Click event |
+| onKeyPress | Key press |
+| onChange | When an element has its state changed. Example: Input field text has changed. |
+| onFocus | When an element receive focus. Example: Input field get clicked. |
+| onBlur | When an element loses focus. Example: Clicking outside of the input field that had focus. |
+
+> Sample from the Counter component
+```js
+// In the render method
+<button onClick={this.handleIncrement} className="btn btn-secondary btn-sm m-2">Increment</button>
+
+// In the Counter component class
+handleIncrement(){
+    alert("Increment click.");
+}
+```
+
+### Binding event handlers
+
+We cannot access the state directly from an event handler. For instance, our `handleIncrement()` method would send an error should we try to log the count value from the state to the console.
+
+![Trying to access the state directly from an event handler does not work](img/StateUndefinedError.png)
+
+Indeed `this` returns `unefined`.
+
+In JavaScript, `this` behaves differently than other languages.
+Depending on how a function is called `this` can reference different objects.
+- If called as part of a method of an object, this will reference that object.
+- If called as a standalone function, this will reference the Window object by default. If the strict mode is enabled, the return value is `undefined`.
+
+A solution to solve this issue is to bind the current object to the method. This needs to be done in the constructor of the class.
+
+```js
+constructor(){
+    super();
+    this.handleIncrement = this.handleIncrement.bind(this);
+}
+```
+
+Though this method is simple, it can become noisy for it demands the use of a `constructor()` in which every method that needs it would be bound as shown above.
+
+Another solution is to use an *arrow function*. These functions do not rebind the `this` keyword. Instead they inherit it.
+
+### Updating the state
+
+We could update the value of our counter because we are basically writing JS code.
+
+```js
+handleIncrement = () => {
+    this.state.count++
+    console.log(this.state.count);
+}
+```
+The above code will work because we are just logging the counter to the console. But on React side, the value change in the state will not be monitored, the change will not be detected and therefore the view will remain static.
+
+React `Component` type provides us with the `setState()` method. This method tells React we are updating the state. Then React will figure ou what part of the state has changed and will synchronise the change from the Virtual DOM with the actual DOM. So in React we have to use `setState()`. It takes an object that either merge (if we provide a new variable) or updates (if we change the value of an existing variable) the state.
+
+Another important thing to note is `setState()` is asynchronous. Which means the operation does not necessarily ends along with the instruction.
+
+> `setState()` is asynchronous
+```js
+handleIncrement = () => {
+    this.setState({count: this.state.count + 1}, () => {
+        console.log("Callback setState: "+this.state.count);
+    });
+    console.log("After setState: "+this.state.count);
+}
+```
+
+<br/>
+
+> Output of the above
+
+![Though being the instruction after `setState()`, the console.log appears before the one in the callback function.](img/AsynchronousSetState.png)
+
+As we can see, the call to `console.log()` that happens after `setState()` displays before the one in the callback method. The former displays the old value, while the later displays the expected value. 
+
+### Passing event arguments
+
+We learned that event attributes expect a function reference (i.e. not a call. In other words not `myFunction()` but `myFunction` and it cannot provide parameters).
+
+One method to work around that is to wrap the parameterised call to the function into  another function.
+
+
+```js
+handleIncrement = (myParam) => {
+    console.log(myParam);
+
+    this.setState({count: this.state.count + 1});
+}
+
+doHandleIncrement = () => {
+    this.handleIncrement({id: 1});
+}
+
+// In render method we use our wrapper function doHandleIncrement instead of the wrapped function reference.
+<button onClick={this.doHandleIncrement} className="btn btn-secondary btn-sm m-2">Increment</button>
+```
+
+Though it might work, this is a tedious and noisy way to work on this matter. A better solution is to use an inline function instead. For the sake of explanation the parameter will be hardcoded.
+
+> In the render method
+```js
+<button onClick={() => {this.handleIncrement({id:1})}} className="btn btn-secondary btn-sm m-2">Increment</button>
+```
+
+> Output
+![Parameter has been passed to an event handler](img/EventParameterPassed.png)
