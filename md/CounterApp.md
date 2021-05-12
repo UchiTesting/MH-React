@@ -314,3 +314,133 @@ Though it might work, this is a tedious and noisy way to work on this matter. A 
 > Output
 
 ![Parameter has been passed to an event handler](img/EventParameterPassed.png)
+
+## Composing components
+
+So far we've been working on a single component. But React pages are hierarchies of composed components. In other words, components can make use of other components even multiple times. We create a new Component `CounterSet` to wrap a few of the previously made `Counter` component.
+
+```js
+import React, { Component } from 'react';
+import Counter from './counter';
+
+class CounterSet extends Component {
+    render() {
+        return (
+            <div>
+                <Counter />
+                <Counter />
+                <Counter />
+                <Counter />
+            </div>
+        )
+    }
+}
+
+export default CounterSet
+```
+
+<br/>
+
+> The output in the browser
+
+![We reused the Counter component. Each one have its own state.](img/ComponentComposition.png)
+
+A better method is to use a collection that holds relevant data about our components. Then use a loop over that collection to create and initialize each of them.
+
+```js
+class CounterSet extends Component {
+
+    state = {
+        counters: [
+            {id:1, value:9},
+            {id:2, value:2},
+            {id:3, value:7},
+            {id:4, value:5},
+            {id:5, value:0}
+        ]
+    }
+
+    render() {
+        return (
+            <div>
+                {this.state.counters.map(counter => <Counter key={counter.id} value={counter.value}/>)}  
+            </div>
+        )
+    }
+}
+```
+
+This way, it is easy to maintain the paramaters to pass to a component.
+Passing data to a component is done via freely named attributes. 
+
+The name of the attribute is then part of the properties of the component which is a JavaScript object called `props`. This object will in its turn have a named value reflecting the name of the attribute that has been passed. The default value passed is `true`;
+
+In the loop from the above code, we add `value={counter.value}` inside the `Counter` tag. This will result in that `Counter` object having a `value` property initialized with the value taken from the `counters` collection set earlier.
+
+> counter.jsx
+```js
+state  = {
+    value: this.props.value
+}
+
+// ...
+
+formatCount() {
+    const {value} = this.state;
+    return value === 0 ? 'Zero': value;
+}
+```
+
+From the `Counter` component, this will allow us to initialize the given value in the `state`.
+
+There is also a special property to `props` called `children` that is handy to pass UI code. Instead of using the component in a self-closing fashion, we use it as an opening/closing pair. So instead of `<Counter />`, we use `<Counter></Counter>`. What is between these tags will be put into that `children` property.
+
+> From the render method of counterSet.jsx
+```javascript
+<div>
+    {this.state.counters.map(counter => 
+    <Counter key={counter.id} value={counter.value}>
+        <h6>Counter #{counter.id}</h6>
+    </Counter>)}
+</div>
+```
+
+Inside the component tags, we add some markup. Notice it is an `<h6>` header tag. We provide the `counter.id` value.
+
+> From the render method of counter.jsx
+```javascript
+<React.Fragment>
+    {this.props.children}
+    // ... Anything then ...
+</React.Fragment>
+```
+
+On the `props.children` receiving component, we can simply include that `children` property. 
+
+```js
+{this.props.children}
+```
+
+> Result in the browser
+
+![](img/PropsPassingChildren.png)
+
+In the browser, our counter are now given those respective headings.
+
+> Sample from the output in the console
+
+![](img/PropsPassingChildrenOutput.png)
+
+In the console we get a React element which type is `h6`. We also see that `props` has a `children` array of 2 elements being the text provided along with the `counter.id` value it got passed.
+
+We can get the same result by just passing the `id` to our component and have it use it to internally render the heading.
+
+## Debugging React Apps
+
+A useful tool to debug React application is an extension Facebook that exists for Firefox and Chrome. It will basically allow to view the component hierarchy along with some internals such as `state` and `props`.
+
+It has a filtering functionality especially handy in complex applications.
+
+Selecting an element from that hierarchy sets a javascript `$r` variable which makes it possible to interact from the console.
+
+Similarly the native Element tab from the developer tools displays the DOM. Selecting a node set a `$0` variable that also allows interaction from the console.
