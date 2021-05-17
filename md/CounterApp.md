@@ -9,6 +9,21 @@ In `index.js` we add a line to import the library.
 
 `import 'bootstrap/dist/css/bootstrap.css';`
 
+> Table of Content  
+> [Components](#components)  
+> [Rendering Code](#rendering-code)
+> [Embedding Expression](#embedding-expression)  
+> [Setting Attributes](#setting-attributes)  
+> [Rendering classes dynamically](#rendering-classes-dynamically)  
+> [Rendering lists](#rendering-lists)  
+> [Conditional Rendering](#conditional-rendering)  
+> [Events](#events)  
+> [Composing components](#composing-components)  
+> [Debugging React Apps](#debugging-react-apps)  
+> [State vs Props](#state-vs-props)  
+> [Raising and Handling Events](#raising-and-handling-events)  
+> [](#)    
+
 ## Components
 
 Components are placed in a `src/components` subfolder by convention. Components may be written in `.js` files but using `.jsx` file extension is advised for it allows the IDE to provide a more complete API.
@@ -18,6 +33,8 @@ We create a first `Counter` component with the `rce` snippet from the extension 
 In `index.js` we import our newly created component.
 
  `import Counter from './components/counter';`
+
+[Back to top](#create-app-project)
 
  ## Rendering code
 
@@ -94,6 +111,7 @@ The render method actually translate to a call to `React.createElement()` which 
  const count = this.state.count;
  const {count} = this.state; // equivalent to the above.
  ```
+[Back to top](#create-app-project)
 
  ## Setting Attributes
 
@@ -117,6 +135,8 @@ The render method actually translate to a call to `React.createElement()` which 
  <span style={{fontSize:12, fontWeight:'bold'}} className="badge badge-primary m-2">{this.formatCount()}</span>
  ```
 
+[Back to top](#create-app-project)
+
 ## Rendering classes dynamically
 
 We want to make the badge for the counter apply `badge-warning` Bootstrap class is the value is 0 or `badge-primary` otherwise.
@@ -136,6 +156,8 @@ getBadgeClasses() {
     <span className={this.getBadgeClasses()}> // ...
 ```
 
+[Back to top](#create-app-project)
+
 ## Rendering lists
 
 There is no convenient syntax to render lists in React so far. For that job we use the JS `map()` method. The syntax inside the map is similar to a classical `foreach` loop.
@@ -152,6 +174,8 @@ state  = {
     {this.state.tags.map(tag => <li key={tag}>{tag}</li>)}
 </ul>
 ```
+
+[Back to top](#create-app-project)
 
 ## Conditional rendering
 
@@ -197,7 +221,11 @@ In short, everything is truthy unless they are of one of these:
 
 Though there is no `if`/`else` available in JSX, we can still check a single condition. So using the principle above, we can follow the condition with `&&` operator to get what is following as a result.
 
+[Back to top](#create-app-project)
+
 ## Events
+
+> There will be further notes on events later in the [Raising and Handling Events](#raising-and-handling-events) section.
 
 React has events handling attributes that follows the format `onEventName`. Their value is an expression. The best way to do it is using an event handling method.
 
@@ -314,6 +342,8 @@ Though it might work, this is a tedious and noisy way to work on this matter. A 
 > Output
 
 ![Parameter has been passed to an event handler](img/EventParameterPassed.png)
+
+[Back to top](#create-app-project)
 
 ## Composing components
 
@@ -435,6 +465,8 @@ In the console we get a React element which type is `h6`. We also see that `prop
 
 We can get the same result by just passing the `id` to our component and have it use it to internally render the heading.
 
+[Back to top](#create-app-project)
+
 ## Debugging React Apps
 
 A useful tool to debug React application is an extension Facebook that exists for Firefox and Chrome. It will basically allow to view the component hierarchy along with some internals such as `state` and `props`.
@@ -445,6 +477,8 @@ Selecting an element from that hierarchy sets a javascript `$r` variable which m
 
 Similarly the native Element tab from the developer tools displays the DOM. Selecting a node set a `$0` variable that also allows interaction from the console.
 
+[Back to top](#create-app-project)
+
 ## State vs Props
 
 Props is data we provide a component. Props are read only. Once set, we cannot change the value from within the component.
@@ -454,3 +488,85 @@ Props is data we provide a component. Props are read only. Once set, we cannot c
 State is data local and private to a component.
 
 Custom attributes can be set when using a component. They become part of the props of that used component.
+
+[Back to top](#create-app-project)
+
+## Raising and Handling Events
+
+> See also notes on [Events](#events).
+
+To explain event handling in React we will add a delete button on each counter. This button will be part of the `counter.jsx` file. When this button is clicked, the corresponding counter shall be removed from the list of counter. That list is maintained by the `counterSet.jsx`.
+
+> Rule of thumb: The component that owns a part of the state should be the one modifying it.
+
+The above rule of thumb means that in out current context, when clicking on the delete button which is part of the `counter.jsx` we have to make the `counterSet.jsx` perform the actual action. 
+
+> counter.jsx
+```html
+<button className="btn btn-danger btn-sm m-2">Delete</button>
+```
+
+We define a button in the `counter.jsx` file.
+
+> counterSet.jsx
+```js
+render() {
+    return (
+        <div>
+            {this.state.counters.map(counter => 
+            <Counter
+                key={counter.id} 
+                value={counter.value} 
+                id={counter.id}
+                onDelete={this.handleDelete}
+            />)}
+        </div>
+    )
+}
+
+handleDelete = () => {console.log("HANDLE DELETE CLICKED.");}
+```
+
+We add an event handler method `handleDelete` in our `counterSet.jsx` file.
+In the loop that create `<Counter>` elements, we add an `onDelete` attribute to which we pass a reference to the above mentioned event handler.
+
+> counter.jsx
+```html
+<button onClick={this.props.onDelete} className="btn btn-danger btn-sm m-2">Delete</button>
+```
+
+Finally we update our button in `counter.jsx` with our `onDelete` props. When the delete button on a counter will be clicked, that method will be called.
+
+### Updating the state
+
+We cannot update the state directly. So what we do is create a new counters table and use `setState()` to update it.
+
+```js
+handleDelete = (counterId) => {
+    const counters = this.state.counters.filter(c => c.id !== counterId);
+    this.setState({counters : counters}); // or this.setState({counters});
+}
+```
+
+### Why passing the `key` when `id` shares the same value?
+
+In `counterSet.jsx`, we pass several `props` through custom attributes. As we maintain the code, we may need more of these and the code become difficult to maintain and noisy.
+
+The solution is to simply pass the props in one go.
+
+This results in cleaner and more maintainable `props`.
+
+In the `counter.jsx` file we need to update our reference.
+
+For instance:
+```js
+value: this.props.value
+```
+
+becomes
+
+```js
+value: this.props.counter.value
+```
+
+[Back to top](#create-app-project)
