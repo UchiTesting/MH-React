@@ -570,3 +570,93 @@ value: this.props.counter.value
 ```
 
 [Back to top](#create-app-project)
+
+## Single source of Truth.
+
+To explain that concept, we will implement a Reset button that shall set the values of each counter to 0.
+
+So in the `counterSet.jsx` we we create a button and the relevant method to reset the values.
+
+```js
+handleReset = () => {
+    const counters = this.state.counters.map( c => {
+        c.value = 0;
+        return c;
+    });
+
+    this.setState({counters});
+}
+
+// In the render() method.
+<button onClick={this.handleReset} className="btn btn-primary btn-sm m-2">Reset</button>
+```
+
+Using the React Developer Tools plugin, we can see the state in the `<CounterSet>` component as well as the props in the `<Counter>` components, the value has been updated to 0. The state of the `<Counter>` components remains unchanged though. So the state in the child component is disconnected from the state in its parent. This leads the view to not reflect any change.
+
+### Removing the local state
+
+We need to make our `<Counter>` component a **controlled component**. It means that the component receives its data from its parent and raises events to the parent when data needs to be changed.
+
+In the `<Counter>` component, we remove or update any reference to state that is related to anything that needs to come from the parent component.
+
+For instance, the `formatCount()` method invokes a `value` that is no more available from the `state` but the `props`. This will be updated accordingly:
+
+```js
+formatCount() {
+    const {value} = this.props.counter;
+    return value === 0 ? 'Zero': value;
+}
+```
+
+The event handlers are no more part of the `<Counter>` component but passed via the `props`, which means we do not need anymore any internal event handling functions. There are removed.
+
+> counter.jsx
+```html
+<button onClick={this.props.onDecrement} className="btn btn-secondary btn-sm m-2">Decrement</button>
+<button onClick={this.props.onIncrement} className="btn btn-secondary btn-sm m-2">Increment</button>
+```
+
+In the `<CounterSet>` component, we provide new event handlers that get passed to the children components.
+
+> counterSet.jsx
+```js
+render() {
+    return (
+        <div>
+            <button onClick={this.handleReset} className="btn btn-primary btn-sm m-2">Reset</button>
+            {this.state.counters.map(counter => 
+            <Counter
+                key={counter.id} 
+                counter={counter}
+                onDelete={this.handleDelete}
+                onIncrement={() => {this.handleIncrement(counter)}}
+                onDecrement={() => {this.handleDecrement(counter)}}
+            />)}
+        </div>
+    )
+}
+```
+
+Just like for the `handleDelete()` event handler that uses `onDelete` custom attribute, we will use the same principle with the increment and decrement operations.
+
+> counterSet.jsx
+```js
+handleIncrement = counter => {
+    const counters = [...this.state.counters];
+    const index = counters.indexOf(counter);
+    counters[index] = {...counter};
+    counters[index].value++;
+    this.setState({counters});
+}
+
+```
+
+The basic idea is to make a copy of the `counters` array from the state. We then find the corresponding `index` of the `counter` passed as an argument. Because the array copy actually seems to pass a reference to the array, any modification is made directly to the `state`, which is not a good practice in React. We therefore decouple our line by updating the relevant index with our `counter` and work on its value. Finally the state is updated as usual.
+
+[Back to top](#create-app-project)
+
+## Multiple components in sync
+
+
+
+[Back to top](#create-app-project)
