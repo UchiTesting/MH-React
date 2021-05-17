@@ -444,3 +444,13 @@ It has a filtering functionality especially handy in complex applications.
 Selecting an element from that hierarchy sets a javascript `$r` variable which makes it possible to interact from the console.
 
 Similarly the native Element tab from the developer tools displays the DOM. Selecting a node set a `$0` variable that also allows interaction from the console.
+
+## State vs Props
+
+Props is data we provide a component. Props are read only. Once set, we cannot change the value from within the component.
+
+![Props cannot be modified for they are read-only.](img/PropsModifError.png)
+
+State is data local and private to a component.
+
+Custom attributes can be set when using a component. They become part of the props of that used component.
