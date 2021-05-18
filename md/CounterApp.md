@@ -25,8 +25,8 @@ In `index.js` we add a line to import the library.
 > [Single Source of Truth](#single-source-of-truth)    
 > [Multiple components in sync](#multiple-components-in-sync)    
 > [Stateless Functional Components](#stateless-functional-components)    
+> [Destructuring Arguments](#destructuring-arguments)    
 > [Lifecycle Hooks](#lifecycle-hooks)    
-> [](#)    
 
 ## Components
 
