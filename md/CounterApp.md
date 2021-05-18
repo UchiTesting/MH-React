@@ -25,6 +25,7 @@ In `index.js` we add a line to import the library.
 > [Single Source of Truth](#single-source-of-truth)    
 > [Multiple components in sync](#multiple-components-in-sync)    
 > [Stateless Functional Components](#stateless-functional-components)    
+> [Lifecycle Hooks](#lifecycle-hooks)    
 > [](#)    
 
 ## Components
@@ -781,5 +782,61 @@ class CounterSet extends Component {
     }
 }
 ```
+
+[Back to top](#create-app-project)
+
+## Lifecycle Hooks
+
+Components go through several phases in their lifecycle [1].
+
+- Mount
+    - An instance is created and inserted into the DOM.
+    - Lifecycle Hooks
+        - `constructor()`
+        - `render()`
+        - `componentDidMount()`
+- Update
+    - The `state` or `props` did change.
+    -Lifecycle Hooks
+        - `render()`
+        - `componentDidUpdate()`
+- Unmount
+    - An instance is removed from the DOM.
+    -Lifecycle Hooks
+        - `componentWillUnmount()`
+
+We cannot use lifecycle hooks in Stateless Functional Components. Should we need them, we can only do it with a class.
+
+> [1]: There are more methods in the lifecycle of React, but these are the most common.
+
+### Mounting phase
+
+They go in that order:
+
+ <kbd>constructor()</kbd> → <kbd>render()</kbd> → <kbd>componentDidMount()</kbd>
+
+The `constructor()` implies an explicit call to the `super()` method. The method is called once upon initialization of the component. A good opportunity to initialising the properties of that instance such as setting the `state` with `props`.
+
+`componentDidMount()` is called after the component has been rendered to the DOM. It is the perfect place to make AJAX calls.
+
+`render()` return a React element that represents its virtual DOM. React then gets that VDOM and put it in the actual browser DOM. Should the component have children, they are rendered recursively.
+
+### Updating phase
+
+This happens when `state` or `props` are updated. As told earlier the render calls children recursively. The result is a React element which translate to a virtual DOM. React have an version of the Virtual DOM prior to the change. These are diffed to determine which part of the real DOM shall be updated.
+
+`componentDidUpdate()` has 2 parameters `prevProps` and `prevState`. It allows comparison of old state with the current one. A real world application is using it to determine if a condition make it relevant to do another AJAX call to load further data.
+
+```js
+componentDidUpdate(prevProps, prevState){
+    if (prevProps.counter.value !== this.props.counter.value) {
+        // AJAX call is made.
+    }
+}
+```
+
+### Unmounting phase
+
+`componentWillUnmount()` is called when an element is removed from the virtual DOM. It is an occasion to put clean up code such as releasing timers or listeners to avoid memory leaks.
 
 [Back to top](#create-app-project)
