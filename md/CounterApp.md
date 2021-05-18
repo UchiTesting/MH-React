@@ -22,6 +22,9 @@ In `index.js` we add a line to import the library.
 > [Debugging React Apps](#debugging-react-apps)  
 > [State vs Props](#state-vs-props)  
 > [Raising and Handling Events](#raising-and-handling-events)  
+> [Single Source of Truth](#single-source-of-truth)    
+> [Multiple components in sync](#multiple-components-in-sync)    
+> [Stateless Functional Components](#stateless-functional-components)    
 > [](#)    
 
 ## Components
