@@ -671,3 +671,57 @@ Should we have a component hierarchy with a few components between the one on to
 The result is multiple components in sync.
 
 [Back to top](#create-app-project)
+
+## Stateless Functional Components
+
+Only render method
+No event handler
+No helper method
+No state
+Date comes from props
+
+In such situation the component can be converted to a **Stateless Functional Component**. In other words we change the component from being a class to becoming a function. Which of a class of function to use is a matter of personal preference.
+
+> NavBar as a class component
+```js
+import React, { Component } from 'react'
+
+class NavBar extends Component {
+    render() {
+        return (
+            <nav className="navbar navbar-light bg-light">
+                <a className="navbar-brand" href="#">Navbar</a>
+                <span className="badge badge-pill badge-secondary">{this.props.totalCounters}</span>
+            </nav>
+        )
+    }
+}
+
+export default NavBar
+```
+
+Also `props` are part of classes. We need to make props a parameter of the function and the `this` keyword to be removed. React will pass the props as an argument to the function at runtime.
+
+> NavBar as a stateless functional component
+```js
+import React from 'react'
+
+const NavBar = (props) => {
+    return (
+        <nav className="navbar navbar-light bg-light">
+            <a className="navbar-brand" href="#">Navbar</a>
+            <span className="badge badge-pill badge-secondary">{props.totalCounters}</span>
+        </nav>
+    )
+}
+
+export default NavBar
+```
+
+The screenshot bellow shows the diff between the former class component approach, and the stateless functional component one.
+
+> Diff from VS Code showing what has changed between the 2 approaches.
+
+![Diff from VS Code](img/StatelessFunctionalComponent.png)
+
+[Back to top](#create-app-project)
