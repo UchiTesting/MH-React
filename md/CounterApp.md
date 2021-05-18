@@ -728,3 +728,58 @@ The screenshot bellow shows the diff between the former class component approach
 ![Diff from VS Code](img/StatelessFunctionalComponent.png)
 
 [Back to top](#create-app-project)
+
+## Destructuring Arguments
+
+Into a component, they may be numerous references to  `props` and `state`, especially into the `render()` function. 
+We can use **Object Destructuring** to simplify that.
+
+For instance, we can make the code cleaner in `<CounterSet>` component. The following is the `CounterSet` code prior to cleaning it.
+
+```js
+class CounterSet extends Component {
+
+    render() {
+        return (
+            <div>
+                <button onClick={this.props.onReset} className="btn btn-primary btn-sm m-2">Reset</button>
+                {this.props.counters.map(counter =>
+                    <Counter
+                        key={counter.id}
+                        counter={counter}
+                        onDelete={this.props.onDelete}
+                        onIncrement={() => { this.props.onIncrement(counter) }}
+                        onDecrement={() => { this.props.onDecrement(counter) }}
+                    />)}
+            </div>
+        )
+    }
+}
+```
+
+Here is a cleaner version:
+
+```js
+class CounterSet extends Component {
+
+    render() {
+        const { onReset, onDelete, onIncrement, onDecrement } = this.props;
+
+        return (
+            <div>
+                <button onClick={onReset} className="btn btn-primary btn-sm m-2">Reset</button>
+                {this.props.counters.map(counter =>
+                    <Counter
+                        key={counter.id}
+                        counter={counter}
+                        onDelete={onDelete}
+                        onIncrement={() => { onIncrement(counter) }}
+                        onDecrement={() => { onDecrement(counter) }}
+                    />)}
+            </div>
+        )
+    }
+}
+```
+
+[Back to top](#create-app-project)
