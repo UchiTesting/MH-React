@@ -657,6 +657,17 @@ The basic idea is to make a copy of the `counters` array from the state. We then
 
 ## Multiple components in sync
 
+We want to add a navigation bar that would display the number of counters displayed in the `<CounterSet>` component. This means we need to create a new component for that matter. But also we would need to exchange data between these components. We however do not share any parent/child relationship. therefore we cannot exchange data via the `props`.
 
+To solve that problem, we need to have a single common parent to those 2 components. We then make them both children of the `<App>` component. This will allow us to follow a rule that occurs when several components need to share data.
+
+> Lift the state up.
+
+To do that, we need to more the state and the functions that act on it to the parent component.
+So the `counters` array along with `handleIncrement()`, `handleDecrement()` or `handleReset()` must be moved to `<App>` component.
+
+Should we have a component hierarchy with a few components between the one on top holding the common state, and the one that actually needs it, we just pass state via props and reference for functions. Should a method need parameters, only in the component that actually use it, do we provide them using an arrow function notation. Then the call is bubbling up the hierarchy until it reaches the component having the code.
+
+The result is multiple components in sync.
 
 [Back to top](#create-app-project)
